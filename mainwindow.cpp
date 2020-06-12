@@ -19,8 +19,6 @@ struct HKEY_PATH
     LPCSTR path;
 };
 
-void InitLogOnTable(Ui::MainWindow *ui, QString reg);
-void InitServicesTable(Ui::MainWindow *ui, QString reg);
 void RepairString(QString *str);
 void InitLogOnTable(QTableWidget *table, QString reg);
 void InitServicesTable(QTableWidget *table, QString reg);
@@ -29,8 +27,8 @@ void InitTasksTable(QTableWidget *table);
 void InitKnownDllsTable(QTableWidget *table, QString reg);
 void InitTableColumnWidth(QTableWidget* table);
 
-void getHkeyAndPath(QString reg, HKEY_PATH *item);
-void myReadReg(HKEY hKey, LPCSTR path, QMap<QString, QString> *map);
+void GetHkeyAndPath(QString reg, HKEY_PATH *item);
+void ReadReg(HKEY hKey, LPCSTR path, QMap<QString, QString> *map);
 void ReadServices(HKEY hKey, LPCSTR path, QMap<QString, QString> *map);
 void ReadTasks(QMap<QString, QString> *map);
 void DrawTable(QTableWidget *table, int rowIndex, QString imagePath, QString description);
@@ -113,8 +111,8 @@ void InitLogOnTable(QTableWidget *table, QString reg)
 
     QMap<QString, QString> *regMap = new QMap<QString, QString>;
     HKEY_PATH *item = new HKEY_PATH;
-    getHkeyAndPath(reg, item);
-    myReadReg(item->hKey, item->path, regMap);
+    GetHkeyAndPath(reg, item);
+    ReadReg(item->hKey, item->path, regMap);
 
     QMapIterator<QString, QString> it(*regMap);
 
@@ -147,7 +145,7 @@ void InitServicesTable(QTableWidget *table, QString reg)
     DrawHeader(table, rowIndex, reg);
 
     HKEY_PATH *item = new HKEY_PATH;
-    getHkeyAndPath(reg, item);
+    GetHkeyAndPath(reg, item);
     GROUP_KEY *group = new GROUP_KEY;
     group = GetGroupKeyValue(item->hKey, item->path);
 //    qDebug() << group[0].length;
@@ -159,7 +157,7 @@ void InitServicesTable(QTableWidget *table, QString reg)
         QString groupName = QString::fromWCharArray(group[i].subKey);
 
         HKEY_PATH *groupItem = new HKEY_PATH;
-        getHkeyAndPath(reg + "\\" + groupName, groupItem);
+        GetHkeyAndPath(reg + "\\" + groupName, groupItem);
         ReadServices(item->hKey, groupItem->path, groupMap);
 
         QString imagePath = groupMap->value("ImagePath");
@@ -195,7 +193,7 @@ void InitDriversTable(QTableWidget *table, QString reg)
     DrawHeader(table, rowIndex, reg);
 
     HKEY_PATH *item = new HKEY_PATH;
-    getHkeyAndPath(reg, item);
+    GetHkeyAndPath(reg, item);
     GROUP_KEY *group = new GROUP_KEY;
     group = GetGroupKeyValue(item->hKey, item->path);
 //    qDebug() << group[0].length;
@@ -210,7 +208,7 @@ void InitDriversTable(QTableWidget *table, QString reg)
 //        LPCSTR path = pathQstring.toLocal8Bit().constData();
 
         HKEY_PATH *groupItem = new HKEY_PATH;
-        getHkeyAndPath(reg + "\\" + groupName, groupItem);
+        GetHkeyAndPath(reg + "\\" + groupName, groupItem);
 //        LPCSTR path = ((std::string)item->path + "\\" + groupName.toStdString()).c_str();
         ReadServices(item->hKey, groupItem->path, groupMap);
 
@@ -285,8 +283,8 @@ void InitKnownDllsTable(QTableWidget *table, QString reg)
 
     QMap<QString, QString> *regMap = new QMap<QString, QString>;
     HKEY_PATH *item = new HKEY_PATH;
-    getHkeyAndPath(reg, item);
-    myReadReg(item->hKey, item->path, regMap);
+    GetHkeyAndPath(reg, item);
+    ReadReg(item->hKey, item->path, regMap);
 
     QMapIterator<QString, QString> it(*regMap);
 
@@ -311,7 +309,7 @@ void InitKnownDllsTable(QTableWidget *table, QString reg)
     delete item;
 }
 
-void getHkeyAndPath(QString reg, HKEY_PATH *item)
+void GetHkeyAndPath(QString reg, HKEY_PATH *item)
 {
 //    qDebug() << reg;
     if (reg.startsWith("HKLM"))
@@ -326,7 +324,7 @@ void getHkeyAndPath(QString reg, HKEY_PATH *item)
     item->path = tmpPath.toLocal8Bit().constData();
 }
 
-void myReadReg(HKEY hKey, LPCSTR path, QMap<QString, QString> *map)
+void ReadReg(HKEY hKey, LPCSTR path, QMap<QString, QString> *map)
 {
     KEY_VALUE *list = new KEY_VALUE;
     list = GetKeyValue(hKey, path);

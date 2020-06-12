@@ -7,7 +7,6 @@
 #include <string>
 #include <windows.h>
 #include <QString>
-#include <QTextCodec>
 
 char* TCHAR2char(const TCHAR* STR);
 TCHAR* char2TCHAR(const char* str);

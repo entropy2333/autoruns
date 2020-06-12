@@ -8,7 +8,7 @@
 #include <Shlwapi.h>
 
 BOOL GetFileVersionString(LPCTSTR pFileName, LPCTSTR pName /* = NULL */, LPTSTR ptBuf, UINT lenBuf);
-void GetFileDescription(QString filePath, std::string *fileDescription);
+void GetFileDescription(QString filePath, QString *fileDescription);
 void GetDllDescription(QString path, QString *fileDescription);
 
 BOOL GetFileVersionString(LPCTSTR pFileName, LPCTSTR pName /* = NULL */, LPTSTR ptBuf, UINT lenBuf)
